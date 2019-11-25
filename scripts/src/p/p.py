@@ -4,30 +4,37 @@ from syspy import Shell
 from syspy.tools import getInputs, parseOptions
 sh = Shell()
 
-version = 'Version: 0.0.2'
+version = 'Version: 0.0.1'
 
 synopsis_msg = '''~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-C
+p
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-A python package for quickly compiling C/C++ code without a makefile
-Run from top level of project directory
-Useful for rapid prototyping of C/C++ packages
+A python wrapper for useful python commands
+contains some useful commands for virtual environments
 '''
 def synopsis():
 	print(synopsis_msg)
+
+shortcuts = {
+	'a': ['source', 'env/bin/activate'],
+	'c': ['python3', '-m', 'virtualenv', 'env'],
+	'd': ['deactivate'],
+	't': ['python3', '-m unittest discover', '-t ../..'],
+	}
 
 help_msg = '''options
 	-h, --help :\thelp menu
 	--synopsis :\tpackage description
 	-v, --verbose :\ttalk to me
 	--version :\tversion
-commands
-	c: gather relevant files, compile source, create ./execute'''
+
+command shortcuts'''
+
 def help():
 	print(help_msg)
+	for sh in shortcuts:
+		print('\t', sh, ':\t', ' '.join(shortcuts[sh]))
 
-unix = False
-platform = False
 verbose = False
 
 shortOpts = 'hv'
@@ -50,32 +57,11 @@ for opt, arg in options:
 		sh.verbose = True
 	elif opt == '--version': print(version); sh.log.succeed()
 
-def compile():
-	source_files = sh.find.recurse('*.c')
-	header_dirs = sh.find.directories_with('*.h')
-	header_dirs_with_options = \
-		[y for x in zip(['-I'] * len(header_dirs), header_dirs) for y in x]
-
-	cmd = ['cc'] + \
-			source_files + \
-			['-o ./execute'] + \
-			header_dirs_with_options
-
-	if sh.verbose:
-		print()
-		print('Source files:')
-		print(source_files)
-		print()
-		print('Header file include directories:')
-		print(header_dirs)
-		print()
-
-	sh.command(cmd)
-
-if (command):
-	if command == 'c': compile()
-	else: sh.log.error('not a recognized command: ' + command)
+if command:
+	if (command in shortcuts.keys()): sh.command(shortcuts[command])
+	else:
+		full_command = ([command] + remainder) if remainder else [command]
+		sh.command(['python3'] + full_command)
 else:
 	# default behavior of the package
-	synopsis()
-	help()
+	sh.command(['python3'])

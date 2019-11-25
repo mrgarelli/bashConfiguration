@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
-from syspy import Shell, getInputs, parseOptions, succeed, error
+from syspy import Shell
+from syspy.tools import getInputs, parseOptions
 sh = Shell()
 
 version = 'Version: 0.0.1'
@@ -49,12 +50,12 @@ options, command, remainder = parseOptions(getInputs(), shortOpts, longOpts)
 
 # deals with options accordingly
 for opt, arg in options:
-	if opt in ('-h', '--help'): help(); succeed()
-	elif opt in ('--synopsis'): synopsis(); succeed()
+	if opt in ('-h', '--help'): help(); sh.log.succeed()
+	elif opt in ('--synopsis'): synopsis(); sh.log.succeed()
 	elif opt in ('-v', '--verbose'):
 		verbose = True
 		sh.verbose = True
-	elif opt == '--version': print(version); succeed()
+	elif opt == '--version': print(version); sh.log.succeed()
 
 def compile():
 	source_files = sh.find.recurse('*.c')
@@ -80,18 +81,18 @@ def compile():
 
 # TODO: add command to search for environment variables
 if (command):
-	if len(remainder) > 1: error('too many input arguments')
+	if len(remainder) > 1: raise TypeError('too many input arguments')
 	def list_print(li):
 		for item in li: print('./' + item)
 	try: pattern = remainder[0]
-	except: error('not enough input args, expecting a pattern to search for')
+	except: raise TypeError('not enough input args, expecting a pattern to search for')
 
 	if command == 'd': list_print(sh.find.directories_with(pattern))
 	elif command == 'h': list_print(sh.find.here(pattern))
 	elif command == 'i': sh.command(['find . -type f -print | xargs grep'] + remainder)
 	elif command == 'q': sh.command(['find . -type f -iname "*' + remainder[0] + '*"'])
 	elif command == 'r': list_print(sh.find.recurse(pattern))
-	else: error('not a recognized command: ' + command)
+	else: sh.log.error('not a recognized command: ' + command)
 else:
 	# default behavior of the package
 	synopsis()

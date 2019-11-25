@@ -1,9 +1,0 @@
-options
-	-h: help menu
-	-e: use editor to edit settings
-
-arguments
-	c: update all system configurations
-	d: view/edit documentation
-	i: run all system installations
-	s: view/edit shortcuts

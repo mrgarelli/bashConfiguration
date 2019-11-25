@@ -1,0 +1,30 @@
+$PATH.append($HOME + '/scripts/bin')
+
+source @($HOME + '/xonsh/up.xsh')
+source @($HOME + '/xonsh/dn.xsh')
+source @($HOME + '/Syspy/syspy/shell.py')
+sh = Shell()
+
+aliases['c'] = 'clear'
+aliases['up'] = _up
+aliases['dn'] = _dn
+aliases['vim'] = sh.vim
+aliases['chrome'] = sh.chrome
+aliases['pt'] = 'python3 -m pytest'
+
+# some customization options, see https://xon.sh/envvars.html for details
+$MULTILINE_PROMPT = '`·.,¸,.·*¯'
+$VI_MODE = True
+$LS_COLORS='rs=0:di=01;36:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:'
+$XONSH_COLOR_STYLE = 'solarized-dark'
+$XONSH_SHOW_TRACEBACK = True
+$XONSH_STORE_STDOUT = True
+$XONSH_HISTORY_MATCH_ANYWHERE = False
+$COMPLETIONS_CONFIRM = True
+$XONSH_AUTOPAIR = True
+
+source-bash @($HOME + '/.platform.sh')
+print(". ~/.platform.sh")
+
+source-bash @($HOME + '/.locrc.sh')
+print(". ~/.locrc.sh")

@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
-from syspy import Shell, getInputs, parseOptions, succeed, error
+from syspy import Shell
+from syspy.tools import getInputs, parseOptions
 sh = Shell()
 
 version = 'Version: 1.0'
@@ -87,18 +88,18 @@ options, command, remainder = parseOptions(getInputs(), shortOpts, longOpts)
 
 # deals with options accordingly
 for opt, arg in options:
-	if opt in ('-h', '--help'): help(); succeed()
+	if opt in ('-h', '--help'): help(); sh.log.succeed()
 	elif opt in ('-p'):
 		platform = True
 		git_command = platform_git_command
-	elif opt in ('--synopsis'): synopsis(); succeed()
+	elif opt in ('--synopsis'): synopsis(); sh.log.succeed()
 	elif opt in ('-u'):
 		unix = True
 		git_command = unix_git_command
 	elif opt in ('-v', '--verbose'):
 		verbose = True
 		sh.verbose = True
-	elif opt == '--version': print(version); succeed()
+	elif opt == '--version': print(version); sh.log.succeed()
 
 def git(command): sh.command([git_command] + command)
 
@@ -109,11 +110,9 @@ def add_all(files):
 
 def add_all_unix_files():
 	files = [
-		'/.bashrc',
+		'/.xonshrc',
 		'/.gitignore',
 		'/readme.md',
-		'/.rdm',
-		'/.settings/*',
 		'/scripts/src/*',
 		'/scripts/scripts.py',
 		'/Local/scripts.py',
@@ -133,6 +132,7 @@ def add_all_platform_files():
 			'/.config/Code/User/keybindings.json',
 			'/.config/Code/User/settings.json',
 			'/.config/openbox/lxde-rc.xml',
+			'/.AndroidStudio3.5/config/keymaps',
 			]
 	elif platform =='mac':
 		files = [
@@ -142,7 +142,7 @@ def add_all_platform_files():
 			'/Library/Application\ Support/Code/User/settings.json',
 		]
 	else:
-		error('unrecognized platform')
+		sh.log.error('unrecognized platform')
 	add_all(files)
 
 if (command):
