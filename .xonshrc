@@ -1,16 +1,34 @@
 $PATH.append($HOME + '/scripts/bin')
 
-source @($HOME + '/xonsh/up.xsh')
-source @($HOME + '/xonsh/dn.xsh')
 source @($HOME + '/Syspy/syspy/shell.py')
 sh = Shell()
 
 aliases['c'] = 'clear'
-aliases['up'] = _up
-aliases['dn'] = _dn
 aliases['vim'] = sh.vim
 aliases['chrome'] = sh.chrome
 aliases['pt'] = 'python3 -m pytest'
+
+def _src():
+	python3 @($HOME + '/scripts/scripts.py')
+aliases['src'] = _src
+
+def _up():
+	cd ..
+	t
+	return 0
+aliases['up'] = _up
+
+def _dn(args):
+	if len(args) > 1:
+		raise TypeError('too many input arguments')
+	if len(args) == 0:
+		cd
+		t
+		return 0
+	cd @(args[0])
+	t
+	return 0
+aliases['dn'] = _dn
 
 # some customization options, see https://xon.sh/envvars.html for details
 $MULTILINE_PROMPT = '`·.,¸,.·*¯'
