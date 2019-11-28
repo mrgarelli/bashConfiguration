@@ -41,6 +41,9 @@ $XONSH_HISTORY_MATCH_ANYWHERE = False
 $COMPLETIONS_CONFIRM = True
 $XONSH_AUTOPAIR = True
 
+$XONSH_STDERR_PREFIX = '\033[0;31m'  
+$XONSH_STDERR_POSTFIX = '\033[0m'                                       
+
 source-bash @($HOME + '/.platform.sh')
 print(". ~/.platform.sh")
 
