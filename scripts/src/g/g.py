@@ -137,7 +137,7 @@ def add_all_platform_files():
 	elif platform =='mac':
 		files = [
 			'/.vimrc',
-			'/.platform.sh',
+			'/.platform.xsh',
 			'/Library/Application\ Support/Code/User/keybindings.json',
 			'/Library/Application\ Support/Code/User/settings.json',
 		]
