@@ -111,6 +111,7 @@ def add_all(files):
 def add_all_unix_files():
 	files = [
 		'/.xonshrc',
+		'/.ideavimrc',
 		'/.gitignore',
 		'/readme.md',
 		'/scripts/src/*',
