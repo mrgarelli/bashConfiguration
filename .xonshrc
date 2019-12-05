@@ -1,4 +1,5 @@
 $PATH.append($HOME + '/scripts/bin')
+$PATH.append('/usr/local/bin')
 
 source @($HOME + '/Syspy/syspy/shell.py')
 sh = Shell()
@@ -43,6 +44,8 @@ $XONSH_AUTOPAIR = True
 
 $XONSH_STDERR_PREFIX = '\033[0;31m'  
 $XONSH_STDERR_POSTFIX = '\033[0m'                                       
+
+print('. ~/.xonshrc')
 
 source @($HOME + '/.platform.xsh')
 source @($HOME + '/.locrc.xsh')

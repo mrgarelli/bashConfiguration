@@ -138,6 +138,7 @@ def add_all_platform_files():
 		files = [
 			'/.vimrc',
 			'/.platform.xsh',
+			'/Library/Preferences/AndroidStudio3.4/keymaps/deku.xml',
 			'/Library/Application\ Support/Code/User/keybindings.json',
 			'/Library/Application\ Support/Code/User/settings.json',
 		]
