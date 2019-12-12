@@ -15,8 +15,8 @@ def synopsis():
     print(synopsis_msg)
 
 shortcuts = {
-        'ls': ['docker ps --format "table {{.Names}}\t{{.ID}}\t{{.Image}}\t{{.Ports}}"'],
-        }
+    'ls': ['docker ps --format "table {{.Names}}\t{{.ID}}\t{{.Image}}\t{{.Ports}}"'],
+}
 
 help_msg = '''options
         -h, --help :\thelp menu
@@ -36,11 +36,11 @@ def help():
 
 shortOpts = 'hv'
 longOpts = [
-        'help',
-        'synopsis',
-        'verbose',
-        'version',
-        ]
+    'help',
+    'synopsis',
+    'verbose',
+    'version',
+]
 
 # parsed options and gathers remainder (command)
 options, command, remainder = parseOptions(getInputs(), shortOpts, longOpts)
