@@ -125,7 +125,7 @@ def add_all_platform_files():
 	if platform == 'linux':
 		files = [
 			'/.vimrc',
-			'/.platform.sh',
+			'/.platform.xsh',
 			'/.xinitrc',
 			'/.inputrc',
 			'/.local/share/konsole/*',
