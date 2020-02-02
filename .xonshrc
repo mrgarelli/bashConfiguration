@@ -1,12 +1,12 @@
 $PATH.append($HOME + '/scripts/bin')
 $PATH.append('/usr/local/bin')
 
-source @($HOME + '/Syspy/syspy/shell.py')
+source @($HOME + '/SysPy/syspy/shell.py')
 sh = Shell()
 
-aliases['c'] = 'clear'
-aliases['vim'] = sh.vim
 aliases['chrome'] = sh.chrome
+aliases['vim'] = sh.vim
+aliases['c'] = 'clear'
 aliases['pt'] = 'python3 -m pytest'
 
 def _src():
