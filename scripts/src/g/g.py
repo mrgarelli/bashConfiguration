@@ -114,6 +114,7 @@ def add_all_unix_files():
 		'/.ideavimrc',
 		'/.gitignore',
 		'/readme.md',
+		'/.rsrc',
 		'/scripts/src/*',
 		'/scripts/scripts.py',
 		'/Local/scripts.py',
