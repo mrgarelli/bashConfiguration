@@ -49,6 +49,7 @@ help_msg = '''options
 
 custom commands
 	aa: adds all files, same as "add ." in normal repos, custom for -u and -p
+  rsth <n>: resets back to HEAD, if given n then it removes that number of commits as well
 
 command shortcuts'''
 
@@ -115,6 +116,7 @@ def add_all_unix_files():
 		'/readme.md',
 		'/.rsrc',
 		'/scripts/src/*',
+		'/scripts/__init__.py',
 		'/scripts/scripts.py',
 		'/Local/scripts.py',
 		]
@@ -147,9 +149,13 @@ def add_all_platform_files():
 		sh.log.error('unrecognized platform')
 	add_all(files)
 
-def hardReset():
-	# 'rsth': ['reset', '--hard', 'HEAD'],
-	if remainder: pass
+def hardReset(remainder):
+	try: number_commits = remainder[0]
+	except: number_commits = None
+	if number_commits:
+		git(['reset --hard HEAD~' + str(number_commits)])
+	else:
+		git(['reset --hard HEAD'])
 
 if (command):
 	if command == 'aa':
@@ -157,7 +163,7 @@ if (command):
 		elif platform: add_all_platform_files()
 		else: git(['add .'])
 	elif command == 'rsth':
-		hardReset()
+		hardReset(remainder)
 	else:
 		git(shortcuts.get(command, [command]) + remainder)
 else:
