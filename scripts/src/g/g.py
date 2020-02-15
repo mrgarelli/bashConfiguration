@@ -33,7 +33,6 @@ shortcuts = {
 	'plo': ['pull', 'origin'],
 	'rma': ['rm', '-r', '--cached', '.'],
 	'rst': ['reset'],
-	'rsth': ['reset', '--hard', 'HEAD'],
 	's': ['status'],
 	'sh': ['stash'],
 	'shc': ['stash', 'clear'],
@@ -147,11 +146,17 @@ def add_all_platform_files():
 		sh.log.error('unrecognized platform')
 	add_all(files)
 
+def hardReset():
+	# 'rsth': ['reset', '--hard', 'HEAD'],
+	if remainder: pass
+
 if (command):
 	if command == 'aa':
 		if unix: add_all_unix_files()
 		elif platform: add_all_platform_files()
 		else: git(['add .'])
+	elif command == 'rsth':
+		hardReset()
 	else:
 		git(shortcuts.get(command, [command]) + remainder)
 else:
