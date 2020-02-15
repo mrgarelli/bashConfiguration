@@ -113,6 +113,7 @@ def add_all_unix_files():
 		'/.ideavimrc',
 		'/.gitignore',
 		'/readme.md',
+		'/.rsrc',
 		'/scripts/src/*',
 		'/scripts/scripts.py',
 		'/Local/scripts.py',
@@ -129,8 +130,8 @@ def add_all_platform_files():
 			'/.inputrc',
 			'/.local/share/konsole/*',
 			'/.config/konsolerc',
-			'/.config/Code/User/keybindings.json',
-			'/.config/Code/User/settings.json',
+			'/.config/Code\ -\ OSS/User/keybindings.json',
+			'/.config/Code\ -\ OSS/User/settings.json',
 			'/.config/openbox/lxde-rc.xml',
 			'/.AndroidStudio3.5/config/keymaps',
 			]
