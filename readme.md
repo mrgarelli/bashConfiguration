@@ -1,7 +1,10 @@
 ### System Configuration
-![desktop-image](.rsrc/Arch.png)
+![desktop-image](.rsrc/arch.png)
 
-* this project was inspired by this [In-depth Guide to tracking dotfiles](https://developer.atlassian.com/blog/2016/02/best-way-to-store-dotfiles-git-bare-repo/)
+### Packages to Install
+> yaourt -Sy xcompmgr transset-df devilspie
+
+### Inspired by this [In-depth Guide to tracking dotfiles](https://developer.atlassian.com/blog/2016/02/best-way-to-store-dotfiles-git-bare-repo/)
 
 ### Sparknotes
 * Starting from scratch

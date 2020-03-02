@@ -48,7 +48,9 @@ help_msg = '''options
         --version :\tversion
 
 custom commands
-        launch: build a docker container and run from scratch
+        bld <containerName>: builds docker container with dockerfile in current directory
+        sh <containerName>: execute a shell in the container
+        contain <imageName> <containerName>: creates a container with the image name
         rm: removes a docker image
 
 command shortcuts'''
@@ -70,17 +72,18 @@ longOpts = [
 options, command, remainder = parseOptions(getInputs(), shortOpts, longOpts)
 
 CONTAINER_NAME='docCont'
-def build_and_return_number():
-    build_number = $(docker build .).split('\n')[-2].split(' ')[-1]
-    return build_number
-def docker_run(build_number, name):
-    docker run --name @(name) @(build_number)
+def get_image_id(image_name_repository):
+    return $(docker images | grep -i @(image_name_repository)).split()[2]
+def docker_run_container(image_id, container_name):
+    docker run --name @(container_name) @(image_id)
 def container_is_running():
     cont_running = (CONTAINER_NAME in $(doc ls -a))
     return cont_running
 def remove_docker_container(cont_name):
     result = $(docker rm @(cont_name))
     if (result != ''): print('removed ', result.strip())
+def execute_shell_in_container(container_name):
+    docker run -it --rm @(container_name) sh
 
 # deals with options accordingly
 for opt, arg in options:
@@ -92,12 +95,15 @@ for opt, arg in options:
     elif opt == '--version': print(version); sh.log.succeed()
 
 if (command):
-    if command == 'launch':
-        build_number = build_and_return_number()
-        remove_docker_container(CONTAINER_NAME)
-        print()
-        print('~~~~~~~~~~OUTPUT~~~~~~~~~~')
-        docker run --name @(CONTAINER_NAME) @(build_number)
+    if (command == 'bld'):
+        sh.command(['docker build -t', remainder[0], '.'])
+    elif command == 'contain':
+        image_name = remainder[0]
+        container_name = remainder[1]
+        image_id = get_image_id(image_name)
+        docker_run_container(image_id, container_name)
+    elif command == 'sh':
+        execute_shell_in_container(remainder[0])
     elif command == 'rm': remove_docker_container(remainder[0])
     else:
         sh.command(shortcuts.get(command, [command]) + remainder)

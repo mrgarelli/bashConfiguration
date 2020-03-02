@@ -129,12 +129,12 @@ def add_all_platform_files():
 			'/.vimrc',
 			'/.platform.xsh',
 			'/.xinitrc',
-			'/.inputrc',
 			'/.local/share/konsole/*',
 			'/.config/konsolerc',
+			'/.config/i3/config',
+			'/.devilspie/opacity.ds',
 			'/.config/Code\ -\ OSS/User/keybindings.json',
 			'/.config/Code\ -\ OSS/User/settings.json',
-			'/.config/openbox/lxde-rc.xml',
 			'/.AndroidStudio3.5/config/keymaps',
 			]
 	elif platform =='mac':
