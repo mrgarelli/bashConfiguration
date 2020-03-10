@@ -2,7 +2,7 @@
 ![desktop-image](.rsrc/arch.png)
 
 ### Packages to Install
-> yaourt -Sy xcompmgr transset-df devilspie
+> yaourt -Sy picom lxappearance pcmanfm shadowfox-updater
 
 ### Inspired by this [In-depth Guide to tracking dotfiles](https://developer.atlassian.com/blog/2016/02/best-way-to-store-dotfiles-git-bare-repo/)
 

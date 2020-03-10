@@ -132,7 +132,7 @@ def add_all_platform_files():
 			'/.local/share/konsole/*',
 			'/.config/konsolerc',
 			'/.config/i3/config',
-			'/.devilspie/opacity.ds',
+			'/.config/picom/picom.conf',
 			'/.config/Code\ -\ OSS/User/keybindings.json',
 			'/.config/Code\ -\ OSS/User/settings.json',
 			'/.AndroidStudio3.5/config/keymaps',
