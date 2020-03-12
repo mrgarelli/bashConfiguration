@@ -2,7 +2,9 @@
 ![desktop-image](.rsrc/arch.png)
 
 ### Packages to Install
-> yaourt -Sy picom lxappearance pcmanfm shadowfox-updater
+[install notes](.rsrc/arch_install_guidelines.md)
+* install yay somehow
+> yay -Sy shadowfox-updater
 
 ### Inspired by this [In-depth Guide to tracking dotfiles](https://developer.atlassian.com/blog/2016/02/best-way-to-store-dotfiles-git-bare-repo/)
 
