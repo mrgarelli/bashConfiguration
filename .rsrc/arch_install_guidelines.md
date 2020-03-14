@@ -107,6 +107,3 @@ passwd 'username'
 > nmcli device wifi connect 'SSID' password 'password'
 
 pip install pygments
-```
-__init__.py for pytest but fucks up source_executables
-```

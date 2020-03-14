@@ -24,3 +24,10 @@ git clone --bare 'https://github.com/mrgarelli/unix.git' $HOME/.unx
 g checkout
 g config --local status.showUntrackedFiles no
 ```
+
+# TODO
+* [ ] add backtick/grave to qmk layout, possibly switch mod and alt
+	* [ ] setup qmk with the dockerfile
+* [ ] arch screenshare
+* [ ] fix syspy source\_executables implementation
+* [ ] add synopsis to show all system addons and their descriptions
