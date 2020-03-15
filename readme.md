@@ -29,5 +29,7 @@ g config --local status.showUntrackedFiles no
 * [ ] add backtick/grave to qmk layout, possibly switch mod and alt
 	* [ ] setup qmk with the dockerfile
 * [ ] arch screenshare
-* [ ] fix syspy source\_executables implementation
+* [x] fix syspy source\_executables implementation
 * [ ] add synopsis to show all system addons and their descriptions
+* [ ] look into arch virtualization tools
+	* [ ] windows server licensing for vm to run solidworks

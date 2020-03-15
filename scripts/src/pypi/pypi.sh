@@ -51,7 +51,7 @@ function check_directory() {
 
 function build() {
 	check_directory
-	python3.7 setup.py sdist bdist_wheel
+	python3 setup.py sdist bdist_wheel
 	succeed 'built successfully'
 	echo
 }
@@ -94,15 +94,15 @@ function push() {
 	if [ -z "${PYPI_PASSWORD}" ] || [ -z "${PYPI_USERNAME}" ]; then
 		error 'must export environment variables for PYPI_USERNAME & PYPI_PASSWORD'
 	fi
-	python3.7 -m twine upload -u "${PYPI_USERNAME}" -p "${PYPI_PASSWORD}" --repository-url https://test.pypi.org/legacy/ dist/*
+	python3 -m twine upload -u "${PYPI_USERNAME}" -p "${PYPI_PASSWORD}" --repository-url https://test.pypi.org/legacy/ dist/*
 	echo
 	succeed 'connection to PYPI test successful. see output above for results of deployment'
 	echo
 }
 
 function setup() {
-	python3.7 -m pip install --user --upgrade setuptools wheel
-	python3.7 -m pip install --user --upgrade twine
+	python3 -m pip install --user --upgrade setuptools wheel
+	python3 -m pip install --user --upgrade twine
 }
 
 cmd="${1}"; shift # remove package name from the inputs
