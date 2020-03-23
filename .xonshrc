@@ -1,5 +1,8 @@
 $PATH.append($HOME + '/scripts/bin')
 $PATH.append('/usr/local/bin')
+$PATH.append('/home/deku/.local/bin')
+
+
 
 source @($HOME + '/SysPy/syspy/shell.py')
 sh = Shell()
@@ -44,8 +47,8 @@ $COMPLETIONS_CONFIRM = True
 $XONSH_AUTOPAIR = True
 $FOREIGN_ALIASES_SUPPRESS_SKIP_MESSAGE = True
 
-$XONSH_STDERR_PREFIX = '\033[0;31m'  
-$XONSH_STDERR_POSTFIX = '\033[0m'                                       
+# $XONSH_STDERR_PREFIX = '\033[0;31m'  
+# $XONSH_STDERR_POSTFIX = '\033[0m'                                       
 
 print('. ~/.xonshrc')
 
