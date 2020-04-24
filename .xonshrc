@@ -7,10 +7,10 @@ $PATH.append('/home/deku/.local/bin')
 source @($HOME + '/SysPy/syspy/shell.py')
 sh = Shell()
 
-aliases['chrome'] = sh.chrome
+# aliases['chrome'] = sh.chrome
 aliases['vim'] = sh.vim
 aliases['c'] = 'clear'
-aliases['pt'] = 'python3 -m pytest'
+aliases['pt'] = 'touch __init__.py; mkdir -p tests; touch tests/__init__.py'
 
 def _src():
 	python3 @($HOME + '/scripts/scripts.py')
@@ -38,8 +38,6 @@ aliases['dn'] = _dn
 $MULTILINE_PROMPT = '`·.,¸,.·*¯'
 $VI_MODE = True
 $VISUAL = 'vim'
-$LS_COLORS='rs=0:di=01;36:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:'
-$XONSH_COLOR_STYLE = 'solarized-dark'
 $XONSH_SHOW_TRACEBACK = True
 $XONSH_STORE_STDOUT = True
 $XONSH_HISTORY_MATCH_ANYWHERE = False

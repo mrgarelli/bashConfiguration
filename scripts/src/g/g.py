@@ -32,6 +32,7 @@ shortcuts = {
 	'plr': ['pull', '--rebase'],
 	'plo': ['pull', 'origin'],
 	'rma': ['rm', '-r', '--cached', '.'],
+	'rmu': ['clean -f;', 'git clean -fd'],
 	'rst': ['reset'],
 	's': ['status'],
 	'sh': ['stash'],
