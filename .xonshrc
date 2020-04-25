@@ -1,7 +1,8 @@
+$XONSH_TRACEBACK_LOGFILE = $HOME + '/.error_log'  
+
 $PATH.append($HOME + '/scripts/bin')
 $PATH.append('/usr/local/bin')
 $PATH.append('/home/deku/.local/bin')
-
 
 
 source @($HOME + '/SysPy/syspy/shell.py')
