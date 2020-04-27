@@ -206,8 +206,10 @@ class DeclarativeShell():
         if self.verbose: print('link, ' + link_path + ', exists, but did not resolve')
         return False
 
-    def ls(self, path):
+    def ls(self, path, inode_type='all'):
         if self.verbose: print('Listing files in directory: ', path)
+        inodes = os.listdir(path)
+        if inode_type == 'files': return [f for f in inodes if os.path.isfile(f)]
         return os.listdir(path)
 
     def make_executable(self, file):

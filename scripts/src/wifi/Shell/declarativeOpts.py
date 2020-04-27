@@ -1,4 +1,10 @@
 import sys, getopt, inspect
+from abc import abstractmethod
+
+GREEN = '\033[0;32m'
+CYAN = '\033[0;36m'
+NC = '\033[0m'  # No Color
+RED = '\033[0;31m'
 
 def parseOptions(arguments, shortOpts, longOpts):
     try:
@@ -17,7 +23,8 @@ def parseOptions(arguments, shortOpts, longOpts):
     except getopt.GetoptError as err: raise(err)
 
 class DeclarativeOptions:
-    def __init__(self):
+    def __init__(self, cli):
+        self.__cli__ = cli
         self.__opts__ = [a for a in dir(self) if not a.startswith('__')]
         self.__instructions_map__ = {}
         self.__short_opts__ = []
@@ -51,10 +58,10 @@ class DeclarativeOptions:
             if arg: instructions_method(arg)
             else: instructions_method()
 
-    def __documentation__(self, tabs):
-        if self.__opts__: subheader('Options', tabs)
+    def __documentation__(self):
+        if self.__opts__: self.__cli__.subheader('Options')
         for opt in self.__opts__:
-            line = [tabs]
+            line = [self.__cli__.tabs]
             variations = opt.split('_')
             attr = getattr(self, opt)
             has_arg = self.__has_arguments__(attr.instructions)
@@ -67,20 +74,32 @@ class DeclarativeOptions:
             print(''.join(line))
 
 class DeclarativeCommands:
+    def __init__(self, cli):
+        self.__cli__ = cli
+
     def __list__(self):
         return [a for a in dir(self) if not a.startswith('__')]
 
-    def __documentation__(self, tabs):
+    def __documentation__(self, recursive=False):
         declared_commands = self.__list__()
-        if declared_commands: subheader('Commands', tabs)
+        if declared_commands: self.__cli__.subheader('Commands')
         for cmd in declared_commands:
             command_class = getattr(self, cmd)
-            print(''.join([tabs, command_class.__name__, ': ', command_class.description]))
-            if hasattr(command_class, 'CLI'):
+            print(''.join([self.__cli__.tabs, command_class.__name__, ': ', command_class.description]))
+            if recursive and hasattr(command_class, 'CLI'):
                 CLI = command_class.CLI
                 cli = CLI()
                 cli.help()
 
+    @abstractmethod
+    def __default_no_args__(self):
+        # TODO: find a way to run the help command here
+        self.__cli__.help()
+
+    @abstractmethod
+    def __default_unspecified_command__(self, command, remainder):
+        error('unrecognized command: ' + command)
+        sys.exit(1)
 
     def __run_command__(self, command, remainder):
         declared_commands = self.__list__()
@@ -101,34 +120,35 @@ class DeclarativeCommands:
 class DeclarativeCLI:
     def __init__(self):
         self.tabs = ''.join(['\t' for n in range(self.__level__)])
-        self.opts = self.Options()
-        self.cmds = self.Commands()
+        self.opts = self.Options(self)
+        self.cmds = self.Commands(self)
 
-    def help(self):
-        self.opts.__documentation__(self.tabs)
-        self.cmds.__documentation__(self.tabs)
+    def help(self, recursive=False):
+        self.opts.__documentation__()
+        self.cmds.__documentation__(recursive=recursive)
 
     def extended_help(self):
         if hasattr(self, 'Synopsis'):
             header('Synopsis')
             self.Synopsis.body()
         header('CLI')
-        self.help()
+        self.help(recursive=True)
 
     def run(self, arguments):
         options, command, remainder = self.opts.__parse_options__(arguments)
         self.opts.__handle_options__(options)
         self.cmds.__run_command__(command, remainder)
 
-GREEN = '\033[0;32m'
-CYAN = '\033[0;36m'
-NC = '\033[0m'  # No Color
+    def subheader(self, msg):
+        divider = ''.join(['_' for char in range(len(msg))])
+        def green_print(word): print('{}{}{}{}'.format(self.tabs, GREEN, word, NC))
+        green_print(divider)
+        green_print(msg)
 
-def subheader(msg, tabs):
-    divider = ''.join(['_' for char in range(len(msg))])
-    def green_print(word): print('{}{}{}{}'.format(tabs, GREEN, word, NC))
-    green_print(divider)
-    green_print(msg)
+
+def error(msg):
+    print('{}[ERROR]{} {}'.format(RED, NC, msg))
+    sys.exit(1)
 
 def header(msg):
     divider = '___________________________________________________________________________________'
