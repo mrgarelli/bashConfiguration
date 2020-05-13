@@ -89,18 +89,18 @@ options, command, remainder = parseOptions(getInputs(), shortOpts, longOpts)
 
 # deals with options accordingly
 for opt, arg in options:
-	if opt in ('-h', '--help'): help(); sh.log.succeed()
+	if opt in ('-h', '--help'): help(); sh.log.success()
 	elif opt in ('-p'):
 		platform = True
 		git_command = platform_git_command
-	elif opt in ('--synopsis'): synopsis(); sh.log.succeed()
+	elif opt in ('--synopsis'): synopsis(); sh.log.success()
 	elif opt in ('-u'):
 		unix = True
 		git_command = unix_git_command
 	elif opt in ('-v', '--verbose'):
 		verbose = True
 		sh.verbose = True
-	elif opt == '--version': print(version); sh.log.succeed()
+	elif opt == '--version': print(version); sh.log.success()
 
 def git(command): sh.command([git_command] + command)
 

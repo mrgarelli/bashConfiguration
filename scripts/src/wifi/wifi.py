@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
-import sys
+import pickle
+import sys, os
 from Shell import DeclarativeCommands, DeclarativeOptions, DeclarativeCLI, DeclarativeShell
 sh = DeclarativeShell()
 
@@ -8,12 +9,30 @@ version = 'Version: 0.0.1'
 
 synopsis = '''\
 Usage: wifi <--option|-o> <command>
-"ls -d": to ensure the driver is in use
-"ls -w": to find the wireless interface'''
+tools to manage network configuration'''
 
-def get_interfaces():
-    interfaces = sh.respond(['netctl', 'list']).split('\n')
-    return [f.strip() for f in interfaces[:-1]]
+class dir:
+    home = os.path.expanduser('~')
+    config = os.path.join(home, '.config', 'wifi')
+    interface = os.path.join(config, 'interface')
+    netctl = os.path.join('/etc', 'netctl')
+
+class cache_interface:
+    @staticmethod
+    def save(interface):
+        sh.command(['mkdir', '-p', dir.config])
+        pickle.dump(interface, open(dir.interface, 'wb'))
+    @staticmethod
+    def get():
+        try: return pickle.load(open(dir.interface, 'rb'))
+        except: sh.log.error('need to set an interface with "wifi on <interface>"')
+
+# def get_networks():
+#     interfaces = sh.respond(['netctl', 'list']).split('\n')
+#     return [f.strip() for f in interfaces[:-1]]
+def get_networks():
+    interfaces = sh.respond(['find', dir.netctl, '-maxdepth', '1', '-type', 'f']).split('\n')
+    return [sh.basename(f.strip()) for f in interfaces[:-1]]
 
 class CLI(DeclarativeCLI):
     __level__ = 0
@@ -56,9 +75,7 @@ class CLI(DeclarativeCLI):
                         description = 'creates a network interface if it does not already exist'
                         @staticmethod
                         def instructions(arg):
-                            interfaces = sh.respond(['netctl', 'list']).split('\n')
-                            interfaces = [f.strip() for f in interfaces[:-1]]
-                            if arg in interfaces: sh.log.error('interface "' + arg + '" already exists')
+                            if arg in get_networks(): sh.log.error('interface "' + arg + '" already exists')
                             else:
                                 ret = sh.command(['sudo', 'cp', '/etc/netctl/examples/wireless-wpa', '/etc/netctl/' + arg])
                                 sys.exit(ret)
@@ -66,28 +83,56 @@ class CLI(DeclarativeCLI):
                         description = 'edit a network interface'
                         @staticmethod
                         def instructions(arg):
-                            interfaces = sh.respond(['netctl', 'list']).split('\n')
-                            interfaces = [f.strip() for f in interfaces[:-1]]
-                            if arg in interfaces:
+                            if arg in get_networks():
                                 ret = sh.command('sudo vim /etc/netctl/' + arg)
                                 sys.exit(ret)
-                            else: sh.log.error(arg + ' not in network interfaces')
+                            else: sh.log.error(arg + ' not in networks')
                     class delete_d:
                         description = 'remove a network interface'
                         @staticmethod
                         def instructions(arg):
-                            if arg in get_interfaces():
+                            if arg in get_networks():
                                 ret = sh.command('sudo rm -f /etc/netctl/' + arg)
                                 sys.exit(ret)
-                            else: sh.log.error('"' + arg + '" not in interfaces')
+                            else: sh.log.error('"' + arg + '" not in networks')
+                    class start_s:
+                        description = 'connetc to the specified network'
+                        @staticmethod
+                        def instructions(arg):
+                            if arg in get_networks():
+                                interface = cache_interface.get()
+                                sh.command(['sudo ip link set', interface, 'down'], passFail=True)
+                                ret = sh.command(['sudo netctl start', arg], passFail=True)
+                                if ret != 0: sh.command('systemctl status netctl@{}.service'.format(arg))
+                                sh.finish()
+                            else: sh.log.error('"' + arg + '" not in networks')
                 class Commands(DeclarativeCommands):
                     class ls:
                         description = 'list current networks'
                         @staticmethod
                         def instructions(remainder):
-                            ret = sh.command(['netctl list'] + remainder)
+                            ret = sh.command(['netctl list'])
                             sys.exit(ret)
 
+        class on:
+            description = '<interface> turn interface on'
+            @staticmethod
+            def instructions(remainder):
+                if remainder:
+                    interface = remainder[0]
+                    ret = sh.command(['sudo ip link set', interface, 'up'], passFail=True)
+                    if ret == 0: cache_interface.save(interface)
+                    sh.finish()
+                else: sh.log.error('command, on, requires input <interface>')
+        class off:
+            description = 'turn wifi interface off'
+            @staticmethod
+            def instructions(remainder):
+                interface = cache_interface.get()
+                sh.command(['sudo netctl stop-all'], passFail=True)
+                sh.command(['sudo ip link set', interface, 'down'], passFail=True)
+                sh.command(['rm -rf', dir.interface], passFail=True)
+                sh.finish()
         class show:
             description = 'network related listings'
             class CLI(DeclarativeCLI):
@@ -98,6 +143,13 @@ class CLI(DeclarativeCLI):
                         @staticmethod
                         def instructions():
                             ret = sh.command('lspci -k | grep -i -A 2 "network"')
+                            sys.exit(ret)
+                    class networks_n:
+                        description = 'scan for networks to connect to'
+                        @staticmethod
+                        def instructions():
+                            interface = cache_interface.get()
+                            ret = sh.command(['sudo iw dev', interface, 'scan | grep "SSID: ."'])
                             sys.exit(ret)
                     class wireless_w:
                         description = 'list wireless interface'
