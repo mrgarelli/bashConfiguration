@@ -2,8 +2,9 @@
 
 import pickle
 import sys, os
-from Shell import DeclarativeCommands, DeclarativeOptions, DeclarativeCLI, DeclarativeShell
-sh = DeclarativeShell()
+from declarecli import DeclarativeCLI, DeclarativeOptions, DeclarativeCommands
+from syspy import Shell
+sh = Shell()
 
 version = 'Version: 0.0.1'
 
@@ -27,9 +28,6 @@ class cache_interface:
         try: return pickle.load(open(dir.interface, 'rb'))
         except: sh.log.error('need to set an interface with "wifi on <interface>"')
 
-# def get_networks():
-#     interfaces = sh.respond(['netctl', 'list']).split('\n')
-#     return [f.strip() for f in interfaces[:-1]]
 def get_networks():
     interfaces = sh.respond(['find', dir.netctl, '-maxdepth', '1', '-type', 'f']).split('\n')
     return [sh.basename(f.strip()) for f in interfaces[:-1]]
@@ -114,6 +112,13 @@ class CLI(DeclarativeCLI):
                             ret = sh.command(['netctl list'])
                             sys.exit(ret)
 
+        class test:
+            description = 'tests the internet connection by pinging google'
+            @staticmethod
+            def instructions(remainder):
+                sh.command(['ping -c 3 google.com'], passFail=True)
+                sh.command('echo ""')
+                sh.finish()
         class on:
             description = '<interface> turn interface on'
             @staticmethod
