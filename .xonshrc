@@ -11,7 +11,6 @@ source @($HOME + '/SysPy/syspy/shell.py')
 sh = Shell()
 
 aliases['c'] = 'clear'
-aliases['pt'] = 'touch __init__.py; mkdir -p tests; touch tests/__init__.py'
 
 def _src():
 	python3 @($HOME + '/scripts/scripts.py')
