@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-import pickle
 import sys, os
 from declarecli import DeclarativeCLI, DeclarativeOptions, DeclarativeCommands
 from syspy import Shell
@@ -17,20 +16,6 @@ class dir:
     config = os.path.join(home, '.config', 'wifi')
     interface = os.path.join(config, 'interface')
     netctl = os.path.join('/etc', 'netctl')
-
-class cache_interface:
-    @staticmethod
-    def save(interface):
-        sh.command(['mkdir', '-p', dir.config])
-        pickle.dump(interface, open(dir.interface, 'wb'))
-    @staticmethod
-    def get():
-        try: return pickle.load(open(dir.interface, 'rb'))
-        except: sh.log.error('need to set an interface with "wifi on <interface>"')
-
-def get_networks():
-    interfaces = sh.respond(['find', dir.netctl, '-maxdepth', '1', '-type', 'f']).split('\n')
-    return [sh.basename(f.strip()) for f in interfaces[:-1]]
 
 class CLI(DeclarativeCLI):
     __level__ = 0
@@ -64,54 +49,6 @@ class CLI(DeclarativeCLI):
                 sh.log.success()
 
     class Commands(DeclarativeCommands):
-        class net:
-            description = 'create edit and delete networks'
-            class CLI(DeclarativeCLI):
-                __level__ = 1
-                class Options(DeclarativeOptions):
-                    class create_c:
-                        description = 'creates a network interface if it does not already exist'
-                        @staticmethod
-                        def instructions(arg):
-                            if arg in get_networks(): sh.log.error('interface "' + arg + '" already exists')
-                            else:
-                                ret = sh.command(['sudo', 'cp', '/etc/netctl/examples/wireless-wpa', '/etc/netctl/' + arg])
-                                sys.exit(ret)
-                    class edit_e:
-                        description = 'edit a network interface'
-                        @staticmethod
-                        def instructions(arg):
-                            if arg in get_networks():
-                                ret = sh.command('sudo vim /etc/netctl/' + arg)
-                                sys.exit(ret)
-                            else: sh.log.error(arg + ' not in networks')
-                    class delete_d:
-                        description = 'remove a network interface'
-                        @staticmethod
-                        def instructions(arg):
-                            if arg in get_networks():
-                                ret = sh.command('sudo rm -f /etc/netctl/' + arg)
-                                sys.exit(ret)
-                            else: sh.log.error('"' + arg + '" not in networks')
-                    class start_s:
-                        description = 'connetc to the specified network'
-                        @staticmethod
-                        def instructions(arg):
-                            if arg in get_networks():
-                                interface = cache_interface.get()
-                                sh.command(['sudo ip link set', interface, 'down'], passFail=True)
-                                ret = sh.command(['sudo netctl start', arg], passFail=True)
-                                if ret != 0: sh.command('systemctl status netctl@{}.service'.format(arg))
-                                sh.finish()
-                            else: sh.log.error('"' + arg + '" not in networks')
-                class Commands(DeclarativeCommands):
-                    class ls:
-                        description = 'list current networks'
-                        @staticmethod
-                        def instructions(remainder):
-                            ret = sh.command(['netctl list'])
-                            sys.exit(ret)
-
         class test:
             description = 'tests the internet connection by pinging google'
             @staticmethod
@@ -119,50 +56,47 @@ class CLI(DeclarativeCLI):
                 sh.command(['ping -c 3 google.com'], passFail=True)
                 sh.command('echo ""')
                 sh.finish()
-        class on:
-            description = '<interface> turn interface on'
+        class status:
+            description = 'get current connection status'
+            @staticmethod
+            def instructions(remainder):
+                sh.command(['nmcli'])
+        class scan:
+            description = 'scans for nearby networks'
             @staticmethod
             def instructions(remainder):
                 if remainder:
-                    interface = remainder[0]
-                    ret = sh.command(['sudo ip link set', interface, 'up'], passFail=True)
-                    if ret == 0: cache_interface.save(interface)
-                    sh.finish()
-                else: sh.log.error('command, on, requires input <interface>')
-        class off:
-            description = 'turn wifi interface off'
+                    sh.log.error('scan takes no arguments')
+                sh.command(['nmcli device wifi rescan'])
+                sh.command(['nmcli device wifi list'])
+        class connect:
+            # TODO: add method https://unix.stackexchange.com/questions/145366/how-to-connect-to-an-802-1x-wireless-network-via-nmcli
+            description = '<network-name> <password> connect to specified network'
             @staticmethod
             def instructions(remainder):
-                interface = cache_interface.get()
-                sh.command(['sudo netctl stop-all'], passFail=True)
-                sh.command(['sudo ip link set', interface, 'down'], passFail=True)
-                sh.command(['rm -rf', dir.interface], passFail=True)
-                sh.finish()
-        class show:
-            description = 'network related listings'
-            class CLI(DeclarativeCLI):
-                __level__ = 1
-                class Options(DeclarativeOptions):
-                    class driver_d:
-                        description = 'check the network driver status'
-                        @staticmethod
-                        def instructions():
-                            ret = sh.command('lspci -k | grep -i -A 2 "network"')
-                            sys.exit(ret)
-                    class networks_n:
-                        description = 'scan for networks to connect to'
-                        @staticmethod
-                        def instructions():
-                            interface = cache_interface.get()
-                            ret = sh.command(['sudo iw dev', interface, 'scan | grep "SSID: ."'])
-                            sys.exit(ret)
-                    class wireless_w:
-                        description = 'list wireless interface'
-                        @staticmethod
-                        def instructions():
-                            ret = sh.command('ip link | grep -A 1 -i "[0-99: ]w"')
-                            sys.exit(ret)
-                class Commands(DeclarativeCommands): pass
+                numArgs = len(remainder)
+                if numArgs < 1:
+                    sh.log.error('connect command requires <network-name> and optional <password> inputs')
+                elif numArgs == 1:
+                    netname = remainder[0]
+                    sh.command(['nmcli device wifi connect', netname])
+                elif numArgs == 2:
+                    netname = remainder[0]
+                    password = remainder[1]
+                    sh.command(['nmcli device wifi connect', netname, 'password', password])
+                elif numArgs > 2:
+                    sh.log.error('too many input arguments, only expect <network-name> <password>')
+        class disconnect:
+            description = '<network-name> disconnect from specified network'
+            @staticmethod
+            def instructions(remainder):
+                numArgs = len(remainder)
+                if numArgs < 1:
+                    sh.log.error('disconnect command requires <network-name> input')
+                elif numArgs > 1:
+                    sh.log.error('too many input arguments, only expect <network-name>')
+                netname = remainder[0]
+                sh.command(['nmcli con down', netname])
 
         def __default_no_args__(self):
             cli.help()
