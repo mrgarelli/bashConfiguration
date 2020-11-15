@@ -136,7 +136,7 @@ def add_all_platform_files():
 			'/.config/picom/picom.conf',
 			'/.config/Code\ -\ OSS/User/keybindings.json',
 			'/.config/Code\ -\ OSS/User/settings.json',
-			'/.AndroidStudio3.5/config/keymaps',
+			'/.config/JetBrains/IdeaIC2020.2/keymaps/deku.xml',
 			]
 	elif platform =='mac':
 		files = [
