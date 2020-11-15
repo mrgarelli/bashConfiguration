@@ -1,7 +1,0 @@
-Android Setup Tool
-
-options
-	-h: help menu
-commands
-	init: initialize an android project
-	setup: install all android dependencies to the system
