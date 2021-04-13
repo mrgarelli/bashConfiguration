@@ -1,0 +1,1 @@
+pacmd list-cards | grep -i 'output:' | grep -i 'available: unknown\|available: yes' | grep -i -e 'available:' -e 'output:'

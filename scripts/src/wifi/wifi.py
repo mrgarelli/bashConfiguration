@@ -97,6 +97,11 @@ class CLI(DeclarativeCLI):
                     sh.log.error('too many input arguments, only expect <network-name>')
                 netname = remainder[0]
                 sh.command(['nmcli con down', netname])
+        class speed:
+            description = 'test the bandwith of current network'
+            @staticmethod
+            def instructions(remainder):
+                sh.command(['speedtest-cli'])
 
         def __default_no_args__(self):
             cli.help()

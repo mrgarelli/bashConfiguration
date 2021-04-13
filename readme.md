@@ -24,6 +24,7 @@ git clone --bare 'https://github.com/mrgarelli/unix.git' $HOME/.unx
 g checkout
 g config --local status.showUntrackedFiles no
 ```
+* [fix hdmi sound](https://forums.developer.nvidia.com/t/gtx-1060-no-audio-over-hdmi-only-hda-intel-detected-azalia/53463/13)
 
 # TODO
 * [ ] add backtick/grave to qmk layout, possibly switch mod and alt

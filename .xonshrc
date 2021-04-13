@@ -7,7 +7,8 @@ $PATH.append('/home/deku/.local/bin')
 $PATH.append('/sbin')
 
 
-source @($HOME + '/SysPy/syspy/shell.py')
+from syspy import Shell
+# source @($HOME + '/SysPy/syspy/shell.py')
 sh = Shell()
 
 aliases['c'] = 'clear'
